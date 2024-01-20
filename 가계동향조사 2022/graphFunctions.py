@@ -353,7 +353,7 @@ def compare_2345(target, col, title=''):
     plt.show()
 
 
-
+# 여성, 남성 비교
 def comparemf(target, col, age_group, title=''):
     one_gen = target[target['Age_Group']==age_group]
     male = one_gen[one_gen['가구주_성별코드']==1]
