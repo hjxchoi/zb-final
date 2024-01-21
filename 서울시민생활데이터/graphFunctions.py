@@ -15,7 +15,8 @@ plt.rcParams['figure.figsize'] = (20, 10)
 mpl.rcParams['axes.unicode_minus'] = False
 
 # 데이터 불러오기(1인가구)
-data = pd.read_csv('./(첨부5)서울 시민생활 데이터_예제코드/1인가구_관심집단.csv', encoding='cp949')
+data = pd.read_csv('../data/1인가구_관심집단.csv', encoding='cp949')
+#data = pd.read_csv('./(첨부5)서울 시민생활 데이터_예제코드/1인가구_관심집단.csv', encoding='cp949')
 
 n = data.shape[0]
 adm_cd = []
@@ -23,7 +24,8 @@ for i in range(n):
     adm_cd.append(str(data['행정동코드'][i]))
 data['adm_cd'] = adm_cd
 
-geo = gpd.read_file('./(첨부5)서울 시민생활 데이터_예제코드/서울_행정동.shp')
+geo = gpd.read_file('../data/서울_행정동.shp')
+#geo = gpd.read_file('./(첨부5)서울 시민생활 데이터_예제코드/서울_행정동.shp')
 df_geo = geo.iloc[:, [2, 9]]
 rdata = pd.merge(data, df_geo, on = 'adm_cd')
 data_merge = gpd.GeoDataFrame(rdata, crs='EPSG:4326', geometry='geometry')
@@ -101,8 +103,8 @@ def draw_one(age_group, col, sex='', cmap='BuGn'):
 
     # 제목
     if sex:
-        plt.title(f'{str(age_group)}대 {sex_w} 중 {col}', fontsize=20)
+        plt.title(f'{str(age_group)}대 {sex_w} 1인가구 중 {col}', fontsize=20)
     else:
-        plt.title(f'{str(age_group)}대 중 {col}', fontsize=20)
+        plt.title(f'{str(age_group)}대 1인가구 중 {col}', fontsize=20)
         
     plt.show()
