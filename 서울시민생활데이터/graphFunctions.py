@@ -15,8 +15,8 @@ plt.rcParams['figure.figsize'] = (20, 10)
 mpl.rcParams['axes.unicode_minus'] = False
 
 # 데이터 불러오기(1인가구)
-data = pd.read_csv('../data/1인가구_관심집단.csv', encoding='cp949')
-#data = pd.read_csv('./(첨부5)서울 시민생활 데이터_예제코드/1인가구_관심집단.csv', encoding='cp949')
+data = pd.read_excel('../data/2023.1월_10개 관심집단 수.xlsx')
+#data = pd.pd.read_excel('../data/2023.1월_10개 관심집단 수.xlsx')
 
 n = data.shape[0]
 adm_cd = []
@@ -108,3 +108,75 @@ def draw_one(age_group, col, sex='', cmap='BuGn'):
         plt.title(f'{str(age_group)}대 1인가구 중 {col}', fontsize=20)
         
     plt.show()
+
+
+
+'''
+################
+################
+# 전체 데이터
+    
+
+data_all = pd.read_excel('../data/2023.1월_10개 관심집단 수.xlsx')
+
+n = data_all.shape[0]
+adm_cd = []
+for i in range(n):
+    adm_cd.append(str(data_all['행정동코드'][i]))
+data_all['adm_cd'] = adm_cd
+
+rdata = pd.merge(data_all, df_geo, on = 'adm_cd')
+data_all_merge = gpd.GeoDataFrame(rdata, crs='EPSG:4326', geometry='geometry')
+
+
+# 연령대 column
+data_all['연령대1'] = data_all['연령대']//10 * 10
+
+
+colname_ = list(data_all.columns[5:17])
+data_all_groupby = data_all.groupby(['adm_cd', '연령대1'])[colname_].sum()
+data_all_groupby = data_all_groupby.reset_index()
+data_all_groupby = pd.merge(data_all_groupby, df_geo, on='adm_cd')
+data_all_groupby = gpd.GeoDataFrame(data_all_groupby, crs='EPSG:4326',
+                                geometry='geometry')
+
+
+################
+################
+# 전체 가구 함수
+
+
+def draw_all(age_group, col, sex='', cmap='BuGn'):
+    data_tmp = data_all_groupby[data_all_groupby['연령대1']==age_group]
+
+    # 성별 포함 분석시
+    if sex:
+        if sex==1:
+            sex_w = '남성'
+        elif sex==2:
+            sex_w = '여성'
+            
+        data_tmp = data_all_merge[data_all_merge['연령대']==age_group][data_all_merge['성별']==sex]
+
+    # 그래프
+    plt.figure(figsize=(5, 5))
+    data_tmp.plot(column=col,
+                legend=True,
+                cmap=cmap,
+                edgecolor='k',
+                legend_kwds={'label': '명'})
+    plt.axis('off')
+    plt.tight_layout()
+
+    # 제목에 오타 있음
+    if col == '샹활서비스 이용이 많은 집단':
+        col = '생활서비스 이용이 많은 집단'
+
+    # 제목
+    if sex:
+        plt.title(f'{str(age_group)}대 {sex_w} 가구 중 {col}', fontsize=20)
+    else:
+        plt.title(f'{str(age_group)}대 가구 중 {col}', fontsize=20)
+        
+    plt.show()
+'''
