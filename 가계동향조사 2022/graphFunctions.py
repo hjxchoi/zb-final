@@ -4,7 +4,9 @@ import seaborn as sns
 import numpy as np 
 
 
-df = pd.read_csv('./2022_연간자료(지출, 2019~) - 전체가구_1인이상_20240120_32176.csv', encoding='euc-kr', low_memory=False)
+
+
+df = pd.read_csv('../data/2022_연간자료(지출, 2019~) - 전체가구_1인이상_20240120_32176.csv', encoding='euc-kr', low_memory=False)
 
 # 연령대 그룹 컬럼 추가
 bins = [0, 19, 29, 39, 49, 59, 69, 79, 89, 99, 109]
@@ -14,9 +16,19 @@ df['Age_Group'] = pd.cut(df['가구주_연령'], bins=bins, labels=labels, right
 # 1인가구
 one = df[df['가구원수']==1]
 
-# windows 한글깨짐
-from matplotlib import rc
-rc('font', family='Malgun Gothic')
+import matplotlib as mpl
+import platform
+
+# 공통 설정
+mpl.rcParams['axes.unicode_minus'] = False
+plt.rcParams['figure.figsize'] = (20, 10)
+
+# 운영 체제에 따른 폰트 설정
+if platform.system() == 'Darwin':  # Mac 환경일 경우
+    mpl.rc('font', family='Arial Unicode MS')
+elif platform.system() == 'Windows':  # Windows 환경일 경우
+    mpl.rc('font', family='Malgun Gothic')
+
 
 
 remove_col = [ '가구원2_가구주관계코드',
